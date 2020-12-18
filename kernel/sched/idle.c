@@ -18,6 +18,16 @@
 
 #include "sched.h"
 
+/*mhkim*/
+#include <asm/mwait.h>
+#include <asm/paravirt.h>
+
+extern int sp_enable_mwait;
+
+DECLARE_PER_CPU(unsigned long, mwait_wakeup_flag);
+DECLARE_PER_CPU(unsigned long, mwait_cr0);
+/*end*/
+
 /* Linker adds these: start and end of __cpuidle functions */
 extern char __cpuidle_text_start[], __cpuidle_text_end[];
 
@@ -209,6 +219,13 @@ exit_idle:
  */
 static void do_idle(void)
 {
+	/*mhkim*/
+	int cpu = smp_processor_id();
+	unsigned long *cr0_ptr = per_cpu_ptr(&mwait_cr0, cpu);
+	*cr0_ptr = read_cr0();
+	*cr0_ptr = *cr0_ptr & 0xffffffffffff00fful;
+	/*end*/
+
 	/*
 	 * If the arch has a polling bit, we maintain an invariant:
 	 *
@@ -222,6 +239,32 @@ static void do_idle(void)
 	tick_nohz_idle_enter();
 
 	while (!need_resched()) {
+		/*mhkim*/
+		if (sp_enable_mwait) {
+			unsigned long *mwf_ptr = per_cpu_ptr(&mwait_wakeup_flag, cpu);
+			//unsigned long *mtf_ptr = per_cpu_ptr(&mwait_timer_flag, cpu);
+			
+			*mwf_ptr = 0;
+			//*mtf_ptr = 0;
+
+			while (true) {
+				*cr0_ptr = read_cr0();
+				*cr0_ptr = *cr0_ptr | 0x0000000000000100ul;
+				write_cr0(*cr0_ptr);
+				
+				__monitor((void *)mwf_ptr, 0, 0);
+				__sti_mwait(0, 0);
+
+				*mwf_ptr = 0;
+
+				if (need_resched() || (read_cr0() & 0x0000000000001000ul)) {
+					//*mtf_ptr = 1;
+					goto mwait_out;
+				}
+			}
+
+		}
+		/*end*/
 		check_pgt_cache();
 		rmb();
 
@@ -245,7 +288,15 @@ static void do_idle(void)
 			cpuidle_idle_call();
 		arch_cpu_idle_exit();
 	}
-
+/*mhkim*/
+mwait_out:
+	if (sp_enable_mwait) {
+		*cr0_ptr = read_cr0();
+		*cr0_ptr = *cr0_ptr & 0xffffffffffff00fful;
+		*cr0_ptr = *cr0_ptr | 0x0000000000000200ul;
+		write_cr0(*cr0_ptr);
+	}
+/*end*/
 	/*
 	 * Since we fell out of the loop above, we know TIF_NEED_RESCHED must
 	 * be set, propagate it into PREEMPT_NEED_RESCHED.
