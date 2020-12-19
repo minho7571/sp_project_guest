@@ -23,9 +23,11 @@
 #include <asm/paravirt.h>
 
 extern int sp_enable_mwait;
+extern int sp_enable_polling;
+extern int polling_loops;
 
-DECLARE_PER_CPU(unsigned long, mwait_wakeup_flag);
-DECLARE_PER_CPU(unsigned long, mwait_cr0);
+DEFINE_PER_CPU(unsigned long, mwait_wakeup_flag);
+DEFINE_PER_CPU(unsigned long, mwait_cr0);
 /*end*/
 
 /* Linker adds these: start and end of __cpuidle functions */
@@ -212,6 +214,112 @@ exit_idle:
 	rcu_idle_exit();
 }
 
+/* mhkim */
+static void do_nops(void)
+{
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+}
+/* end */
+
 /*
  * Generic idle loop implementation
  *
@@ -222,8 +330,9 @@ static void do_idle(void)
 	/*mhkim*/
 	int cpu = smp_processor_id();
 	unsigned long *cr0_ptr = per_cpu_ptr(&mwait_cr0, cpu);
+	int _polling_loops = polling_loops;
 	*cr0_ptr = read_cr0();
-	*cr0_ptr = *cr0_ptr & 0xffffffffffff00fful;
+	*cr0_ptr = *cr0_ptr & 0xffff00fful;
 	/*end*/
 
 	/*
@@ -240,16 +349,36 @@ static void do_idle(void)
 
 	while (!need_resched()) {
 		/*mhkim*/
+		if (sp_enable_polling) {
+			while (_polling_loops) {
+				/*
+				 * a cycle = 0.3 ns = 1s / (3.1GHz * 10^9)
+				 * a nop = 50 cycles = 15 ns (?)
+				 * 1 loop = 100 nops = 1.5 us
+				 */
+				do_nops(); //100 nops
+
+				if (need_resched()) {
+					trace_printk("polling end reason: need_resched\n");
+					goto mwait_out;
+				}
+
+				if ((read_cr0() & 0x00001000ul)) {
+					trace_printk("polling end reason: polling timeout\n");
+					goto continue_idle;
+				}
+				_polling_loops = _polling_loops - 1;
+			}
+		}
 		if (sp_enable_mwait) {
 			unsigned long *mwf_ptr = per_cpu_ptr(&mwait_wakeup_flag, cpu);
-			//unsigned long *mtf_ptr = per_cpu_ptr(&mwait_timer_flag, cpu);
 			
 			*mwf_ptr = 0;
-			//*mtf_ptr = 0;
 
 			while (true) {
+				trace_printk("mwait start\n");
 				*cr0_ptr = read_cr0();
-				*cr0_ptr = *cr0_ptr | 0x0000000000000100ul;
+				*cr0_ptr = *cr0_ptr | 0x00000100ul;
 				write_cr0(*cr0_ptr);
 				
 				__monitor((void *)mwf_ptr, 0, 0);
@@ -257,13 +386,21 @@ static void do_idle(void)
 
 				*mwf_ptr = 0;
 
-				if (need_resched() || (read_cr0() & 0x0000000000001000ul)) {
-					//*mtf_ptr = 1;
+				trace_printk("mwait end\n");
+
+				if (need_resched()) {
+					trace_printk("mwait end reason: need_resched\n");
 					goto mwait_out;
+				}
+				
+				if ((read_cr0() & 0x00001000ul)) {
+					trace_printk("mwait end reason: mwait timeout\n");
+					break;
 				}
 			}
 
 		}
+continue_idle:
 		/*end*/
 		check_pgt_cache();
 		rmb();
@@ -292,8 +429,8 @@ static void do_idle(void)
 mwait_out:
 	if (sp_enable_mwait) {
 		*cr0_ptr = read_cr0();
-		*cr0_ptr = *cr0_ptr & 0xffffffffffff00fful;
-		*cr0_ptr = *cr0_ptr | 0x0000000000000200ul;
+		*cr0_ptr = *cr0_ptr & 0xffff00fful;
+		*cr0_ptr = *cr0_ptr | 0x00000200ul;
 		write_cr0(*cr0_ptr);
 	}
 /*end*/
