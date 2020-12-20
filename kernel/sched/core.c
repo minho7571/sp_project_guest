@@ -54,6 +54,12 @@ EXPORT_SYMBOL_GPL(sp_enable_dynamic);
 int polling_loops = 0;
 module_param(polling_loops, int, 0664);
 EXPORT_SYMBOL_GPL(polling_loops);
+int dpd_inc = 0;
+module_param(dpd_inc, int, 0664);
+EXPORT_SYMBOL_GPL(dpd_inc);
+int dpd_dec = 0;
+module_param(dpd_dec, int, 0664);
+EXPORT_SYMBOL_GPL(dpd_dec);
 /*end*/
 
 /*

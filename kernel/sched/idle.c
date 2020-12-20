@@ -26,6 +26,8 @@ extern int sp_enable_mwait;
 extern int sp_enable_polling;
 extern int sp_enable_dynamic;
 extern int polling_loops;
+extern int dpd_inc;
+extern int dpd_dec;
 
 DEFINE_PER_CPU(unsigned long, mwait_wakeup_flag);
 DEFINE_PER_CPU(unsigned long, mwait_cr0);
@@ -82,7 +84,7 @@ static noinline int __cpuidle cpu_idle_poll(void)
 	local_irq_enable();
 	stop_critical_timings();
 	while (!tif_need_resched() &&
-		(cpu_idle_force_poll || tick_check_broadcast_expired()))
+			(cpu_idle_force_poll || tick_check_broadcast_expired()))
 		cpu_relax();
 	start_critical_timings();
 	trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
@@ -118,7 +120,7 @@ void __cpuidle default_idle_call(void)
 }
 
 static int call_cpuidle(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-		      int next_state)
+		int next_state)
 {
 	/*
 	 * The idle task must be scheduled, it is pointless to go to idle, just
@@ -322,6 +324,611 @@ static void do_nops(void)
 	asm volatile ("nop");
 	asm volatile ("nop");
 	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+	asm volatile ("nop");
+}
+
+void do_do_nops(void)
+{
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+	do_nops(); //200 nops
+
 }
 /* end */
 
@@ -338,6 +945,10 @@ static void do_idle(void)
 	int *dpd_ptr = per_cpu_ptr(&dynamic_polling_delta, cpu);
 	int _polling_loops = polling_loops + *dpd_ptr;
 
+	if (*dpd_ptr < -1000)
+		*dpd_ptr = -1000;
+	if (*dpd_ptr > 1000)
+		*dpd_ptr = 1000;
 	if (_polling_loops < 0) {
 		_polling_loops = 0;
 	}
@@ -362,25 +973,30 @@ static void do_idle(void)
 		/*mhkim*/
 		if (sp_enable_polling) {
 			while (_polling_loops) {
-				/*
-				 * a cycle = 0.3 ns = 1s / (3.1GHz * 10^9)
-				 * a nop = 50 cycles = 15 ns (?)
-				 * 1 loop = 100 nops = 1.5 us
-				 */
-				trace_printk("polling start\n");
-				do_nops(); //100 nops
-				trace_printk("polling end\n");
+				//one loop = 100 ns
+				//trace_printk("polling start\n");
+
+				*cr0_ptr = read_cr0();
+				*cr0_ptr = *cr0_ptr | 0x00000100ul;
+				write_cr0(*cr0_ptr);
+
+				do_do_nops();
+				do_do_nops();
+				do_do_nops();
+				do_do_nops();
+
+				//trace_printk("polling end\n");
 
 				if (need_resched()) {
 					if (sp_enable_dynamic) {
-						*dpd_ptr = *dpd_ptr + DPD_INC/10;
+						*dpd_ptr = *dpd_ptr + dpd_inc;
 					}
 					goto mwait_out;
 				}
 
 				if ((read_cr0() & 0x00001000ul)) { //timeout
 					if (sp_enable_dynamic) {
-						*dpd_ptr = *dpd_ptr - DPD_DEC;
+						*dpd_ptr = *dpd_ptr - dpd_dec;
 					}
 					goto continue_idle;
 				}
@@ -390,33 +1006,33 @@ static void do_idle(void)
 		}
 		if (sp_enable_mwait) {
 			unsigned long *mwf_ptr = per_cpu_ptr(&mwait_wakeup_flag, cpu);
-			
+
 			*mwf_ptr = 0;
 
 			while (true) {
-				trace_printk("mwait start\n");
+				//trace_printk("mwait start\n");
 
 				*cr0_ptr = read_cr0();
 				*cr0_ptr = *cr0_ptr | 0x00000100ul;
 				write_cr0(*cr0_ptr);
-				
+
 				__monitor((void *)mwf_ptr, 0, 0);
 				__sti_mwait(0, 0);
 
 				*mwf_ptr = 0;
 
-				trace_printk("mwait end\n");
+				//trace_printk("mwait end\n");
 
 				if (need_resched()) {
 					if (sp_enable_dynamic) {
-						*dpd_ptr = *dpd_ptr + DPD_INC;
+						*dpd_ptr = *dpd_ptr + dpd_inc;
 					}
 					goto mwait_out;
 				}
-				
+
 				if ((read_cr0() & 0x00001000ul)) { //timeout
 					if (sp_enable_dynamic) {
-						*dpd_ptr = *dpd_ptr - DPD_DEC;
+						*dpd_ptr = *dpd_ptr - dpd_dec;
 					}
 					break;
 				}
@@ -448,7 +1064,7 @@ continue_idle:
 			cpuidle_idle_call();
 		arch_cpu_idle_exit();
 	}
-/*mhkim*/
+	/*mhkim*/
 mwait_out:
 	if (sp_enable_mwait) {
 		*cr0_ptr = read_cr0();
@@ -456,7 +1072,7 @@ mwait_out:
 		*cr0_ptr = *cr0_ptr | 0x00000200ul;
 		write_cr0(*cr0_ptr);
 	}
-/*end*/
+	/*end*/
 	/*
 	 * Since we fell out of the loop above, we know TIF_NEED_RESCHED must
 	 * be set, propagate it into PREEMPT_NEED_RESCHED.
