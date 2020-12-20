@@ -24,10 +24,15 @@
 
 extern int sp_enable_mwait;
 extern int sp_enable_polling;
+extern int sp_enable_dynamic;
 extern int polling_loops;
 
 DEFINE_PER_CPU(unsigned long, mwait_wakeup_flag);
 DEFINE_PER_CPU(unsigned long, mwait_cr0);
+DEFINE_PER_CPU(int, dynamic_polling_delta) = 0;
+
+#define DPD_INC 100
+#define DPD_DEC 10
 /*end*/
 
 /* Linker adds these: start and end of __cpuidle functions */
@@ -330,7 +335,13 @@ static void do_idle(void)
 	/*mhkim*/
 	int cpu = smp_processor_id();
 	unsigned long *cr0_ptr = per_cpu_ptr(&mwait_cr0, cpu);
-	int _polling_loops = polling_loops;
+	int *dpd_ptr = per_cpu_ptr(&dynamic_polling_delta, cpu);
+	int _polling_loops = polling_loops + *dpd_ptr;
+
+	if (_polling_loops < 0) {
+		_polling_loops = 0;
+	}
+
 	*cr0_ptr = read_cr0();
 	*cr0_ptr = *cr0_ptr & 0xffff00fful;
 	/*end*/
@@ -356,17 +367,24 @@ static void do_idle(void)
 				 * a nop = 50 cycles = 15 ns (?)
 				 * 1 loop = 100 nops = 1.5 us
 				 */
+				trace_printk("polling start\n");
 				do_nops(); //100 nops
+				trace_printk("polling end\n");
 
 				if (need_resched()) {
-					trace_printk("polling end reason: need_resched\n");
+					if (sp_enable_dynamic) {
+						*dpd_ptr = *dpd_ptr + DPD_INC/10;
+					}
 					goto mwait_out;
 				}
 
-				if ((read_cr0() & 0x00001000ul)) {
-					trace_printk("polling end reason: polling timeout\n");
+				if ((read_cr0() & 0x00001000ul)) { //timeout
+					if (sp_enable_dynamic) {
+						*dpd_ptr = *dpd_ptr - DPD_DEC;
+					}
 					goto continue_idle;
 				}
+
 				_polling_loops = _polling_loops - 1;
 			}
 		}
@@ -377,6 +395,7 @@ static void do_idle(void)
 
 			while (true) {
 				trace_printk("mwait start\n");
+
 				*cr0_ptr = read_cr0();
 				*cr0_ptr = *cr0_ptr | 0x00000100ul;
 				write_cr0(*cr0_ptr);
@@ -389,12 +408,16 @@ static void do_idle(void)
 				trace_printk("mwait end\n");
 
 				if (need_resched()) {
-					trace_printk("mwait end reason: need_resched\n");
+					if (sp_enable_dynamic) {
+						*dpd_ptr = *dpd_ptr + DPD_INC;
+					}
 					goto mwait_out;
 				}
 				
-				if ((read_cr0() & 0x00001000ul)) {
-					trace_printk("mwait end reason: mwait timeout\n");
+				if ((read_cr0() & 0x00001000ul)) { //timeout
+					if (sp_enable_dynamic) {
+						*dpd_ptr = *dpd_ptr - DPD_DEC;
+					}
 					break;
 				}
 			}
